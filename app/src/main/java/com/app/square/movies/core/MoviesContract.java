@@ -3,12 +3,14 @@ package com.app.square.movies.core;
 import com.app.square.common.base.BasePresenter;
 
 public interface MoviesContract {
-  interface  View{
+    interface View {
 
-  }
+    }
 
-  interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter {
 
+        public void loadDiscoverMoviesList();
 
-  }
+        public void loadNextPageDicoverMovieList();
+    }
 }

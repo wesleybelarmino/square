@@ -1,9 +1,12 @@
 package com.app.square.movies.di;
 
 import com.app.square.movies.MoviesActivity;
+import com.app.square.movies.core.MoviesContract;
 import dagger.Component;
+import javax.inject.Singleton;
 
-@Component(modules = MoviesModule.class)
+@Singleton
+@Component(modules = { MoviesModule.class})
 public interface MoviesComponent {
-  void inject(MoviesActivity moviesActivity);
+    void inject(MoviesActivity moviesActivity);
 }

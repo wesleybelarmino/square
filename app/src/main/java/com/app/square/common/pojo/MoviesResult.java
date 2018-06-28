@@ -2,7 +2,7 @@ package com.app.square.common.pojo;
 
 import java.util.List;
 
-public class MoviesList {
+public class MoviesResult {
 
     private int page;
     private int total_results;
