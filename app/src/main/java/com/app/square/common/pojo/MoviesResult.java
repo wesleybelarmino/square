@@ -13,11 +13,11 @@ public class MoviesResult {
         return page;
     }
 
-    public int getTotal_results() {
+    public int getTotalResults() {
         return total_results;
     }
 
-    public int getTotal_pages() {
+    public int getTotalPages() {
         return total_pages;
     }
 

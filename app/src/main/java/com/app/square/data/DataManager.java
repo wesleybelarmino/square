@@ -19,7 +19,7 @@ public class DataManager {
     }
 
     public Observable<MoviesResult> getMoviesList(int page) {
-        return apiRequest.get().getDiscoverMovies(API_KEY, "en-US", "popularity.desc",
+        return apiRequest.get().movieDiscover(API_KEY, "en-US", "popularity.desc",
             "false","" + page);
     }
 }

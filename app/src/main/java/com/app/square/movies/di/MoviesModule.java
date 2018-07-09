@@ -5,6 +5,7 @@ import com.app.square.movies.core.MoviesContract;
 import com.app.square.movies.core.MoviesPresenter;
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 
 @Module public class MoviesModule {
 
@@ -15,6 +16,6 @@ import dagger.Provides;
     }
 
     @Provides MoviesContract.Presenter providesMoviesPresent() {
-        return new MoviesPresenter(this.moviesView, new DataManager());
+        return new MoviesPresenter(this.moviesView, new DataManager(), new CompositeDisposable());
     }
 }

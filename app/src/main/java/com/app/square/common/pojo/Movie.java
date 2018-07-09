@@ -27,7 +27,7 @@ public class Movie {
         return title;
     }
 
-    public int getVote_count() {
+    public int getVoteCount() {
         return vote_count;
     }
 
@@ -35,7 +35,7 @@ public class Movie {
         return video;
     }
 
-    public float getVote_average() {
+    public float getVoteAverage() {
         return vote_average;
     }
 
@@ -43,23 +43,23 @@ public class Movie {
         return popularity;
     }
 
-    public String getPoster_path() {
+    public String getPosterPath() {
         return poster_path;
     }
 
-    public String getOriginal_language() {
+    public String getOriginalLanguage() {
         return original_language;
     }
 
-    public String getOriginal_title() {
+    public String getOriginalTitle() {
         return original_title;
     }
 
-    public List<Integer> getGenre_ids() {
+    public List<Integer> getGenreIds() {
         return genre_ids;
     }
 
-    public String getBackdrop_path() {
+    public String getBackdropPath() {
         return backdrop_path;
     }
 
@@ -71,7 +71,7 @@ public class Movie {
         return overview;
     }
 
-    public String getRelease_date() {
+    public String getReleaseDate() {
         return release_date;
     }
 }

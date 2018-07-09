@@ -7,10 +7,14 @@ import com.app.square.data.DataManager;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
+import org.reactivestreams.Subscription;
 
 public class MoviesPresenter implements MoviesContract.Presenter {
 
@@ -18,25 +22,37 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     DataManager dataManager;
     private int currentPage;
-    private List<Movie> movies;
+    private int totalPages;
+    private List<Movie> moviesList;
 
-    public MoviesPresenter(MoviesContract.View view, DataManager dataManager) {
+    CompositeDisposable subscriptions;
+
+
+    public MoviesPresenter(MoviesContract.View view, DataManager dataManager, CompositeDisposable subs) {
         this.moviesView = view;
         this.dataManager = dataManager;
-        movies = new ArrayList<>();
+        this.moviesList = new ArrayList<>();
+        this.totalPages = 1;
+        this.subscriptions = subs;
     }
 
-    @Override public void loadDiscoverMoviesList() {
+    @Override public void onCreate() {
+        subscriptions.add(respondToClick());
+    }
+
+    @Override public void loadMoviesList() {
         currentPage = 1;
-        movies.clear();
-        loadDiscoverMovies(currentPage);
+        moviesList.clear();
+        loadMovieDiscover(currentPage);
     }
 
-    @Override public void loadNextPageDicoverMovieList() {
-        loadDiscoverMovies(currentPage++);
+    @Override public void loadNextPageMovieList() {
+        if(currentPage < totalPages){
+            loadMovieDiscover(currentPage++);
+        }
     }
 
-    private void loadDiscoverMovies(int page) {
+    private void loadMovieDiscover(int page) {
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
         Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList(page);
         moviesResultObservable.subscribeOn(Schedulers.io())
@@ -48,8 +64,9 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
                 @Override public void onNext(MoviesResult moviesResult) {
                     Log.d("presenter", "onNext");
-                    movies.addAll(moviesResult.getResults());
-                    Log.d("presenter", "sizer: " + movies.size());
+                    moviesList.addAll(moviesResult.getResults());
+                    totalPages = moviesResult.getTotalPages();
+                    Log.d("presenter", "sizer: " + moviesList.size());
                 }
 
                 @Override public void onError(Throwable e) {
@@ -58,11 +75,22 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
                 @Override public void onComplete() {
                     Log.d("presenter", "onComplete");
+                    moviesView.showMoviesList(moviesList);
                 }
             });
     }
 
-    @Override public void destroy() {
 
+    private Disposable respondToClick() {
+        return moviesView.itemClicks().subscribe(new Consumer<Integer>() {
+            @Override public void accept(Integer integer) throws Exception {
+                Log.d("presenter", "Item: "+integer);
+            }
+        });
+
+    }
+
+    @Override public void destroy() {
+        subscriptions.clear();
     }
 }
