@@ -23,7 +23,7 @@ import javax.inject.Inject;
 public class MoviesActivity extends BaseActivity implements MoviesContract.View {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    //@BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.movies_list) RecyclerView recyclerView;
 
     @Inject MoviesContract.Presenter moviesPresenter;
@@ -45,13 +45,13 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         setSupportActionBar(toolbar);
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show();
-            }
-        });
+        //fab.setOnClickListener(new View.OnClickListener() {
+        //    @Override public void onClick(View view) {
+        //        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        //            .setAction("Action", null)
+        //            .show();
+        //    }
+        //});
 
         moviesAdapter = new MoviesAdapter();
 
