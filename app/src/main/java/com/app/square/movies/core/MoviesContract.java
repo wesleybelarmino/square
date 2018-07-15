@@ -18,5 +18,7 @@ public interface MoviesContract {
         public void loadMoviesList();
 
         public void loadNextPageMovieList();
+
+        public void checkIfNeedRetry();
     }
 }

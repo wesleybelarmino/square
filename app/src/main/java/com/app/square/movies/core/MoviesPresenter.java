@@ -10,11 +10,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.reactivestreams.Subscription;
 
 public class MoviesPresenter implements MoviesContract.Presenter {
 
@@ -24,11 +23,12 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     private int currentPage;
     private int totalPages;
     private List<Movie> moviesList;
+    private boolean notLoadContentByNetProblem = false;
 
     CompositeDisposable subscriptions;
 
-
-    public MoviesPresenter(MoviesContract.View view, DataManager dataManager, CompositeDisposable subs) {
+    public MoviesPresenter(MoviesContract.View view, DataManager dataManager,
+        CompositeDisposable subs) {
         this.moviesView = view;
         this.dataManager = dataManager;
         this.moviesList = new ArrayList<>();
@@ -38,6 +38,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override public void onCreate() {
         subscriptions.add(respondToClick());
+        loadMoviesList();
     }
 
     @Override public void loadMoviesList() {
@@ -47,8 +48,18 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override public void loadNextPageMovieList() {
-        if(currentPage < totalPages){
+        if (currentPage < totalPages) {
             loadMovieDiscover(currentPage++);
+        }
+    }
+
+    @Override public void checkIfNeedRetry() {
+        if (notLoadContentByNetProblem) {
+            if (currentPage <= 1) {
+                loadMoviesList();
+            } else {
+                loadNextPageMovieList();
+            }
         }
     }
 
@@ -71,26 +82,28 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
                 @Override public void onError(Throwable e) {
                     Log.d("presenter", "onError: " + e.toString());
+                    if (e instanceof IOException) {
+                        notLoadContentByNetProblem = true;
+                    }
                 }
 
                 @Override public void onComplete() {
                     Log.d("presenter", "onComplete");
                     moviesView.showMoviesList(moviesList);
+                    notLoadContentByNetProblem = false;
                 }
             });
     }
 
-
     private Disposable respondToClick() {
         return moviesView.itemClicks().subscribe(new Consumer<Integer>() {
             @Override public void accept(Integer integer) throws Exception {
-                Log.d("presenter", "Item: "+integer);
+                Log.d("presenter", "Item: " + integer);
             }
         });
-
     }
 
-    @Override public void destroy() {
+    @Override public void onDestroy() {
         subscriptions.clear();
     }
 }
