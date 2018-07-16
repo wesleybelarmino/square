@@ -1,5 +1,6 @@
 package com.app.square.movies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import butterknife.ButterKnife;
 import com.app.square.R;
 import com.app.square.common.base.BaseActivity;
 import com.app.square.common.pojo.Movie;
+import com.app.square.moviedetail.MovieDetailActivity;
 import com.app.square.movies.core.MoviesContract;
 import com.app.square.movies.di.DaggerMoviesComponent;
 import com.app.square.movies.di.MoviesModule;
@@ -108,5 +110,13 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     @Override protected void onDestroy() {
         super.onDestroy();
         moviesPresenter.onDestroy();
+    }
+
+    public void goToHeroDetailsActivity(Movie movie) {
+
+        //Intent in = new Intent(this, MovieDetailActivity.class);
+        //in.putExtra("hero", (Serializable) movie);
+        //startActivity(in);
+
     }
 }
