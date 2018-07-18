@@ -1,11 +1,12 @@
 package com.app.square.common.pojo;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class Movie {
+public class Movie implements Serializable{
 
     private int id;
     private String title;

@@ -58,6 +58,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
             if (currentPage <= 1) {
                 loadMoviesList();
             } else {
+                currentPage--;
                 loadNextPageMovieList();
             }
         }
@@ -99,6 +100,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         return moviesView.itemClicks().subscribe(new Consumer<Integer>() {
             @Override public void accept(Integer integer) throws Exception {
                 Log.d("presenter", "Item: " + integer);
+                moviesView.goToHeroDetailsActivity(moviesList.get(integer), integer);
             }
         });
     }

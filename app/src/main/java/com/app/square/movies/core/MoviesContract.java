@@ -7,18 +7,15 @@ import java.util.List;
 
 public interface MoviesContract {
     interface View {
-        public void showMoviesList(List<Movie> movies);
-        public Observable<Integer> itemClicks();
+        void showMoviesList(List<Movie> movies);
+        Observable<Integer> itemClicks();
+        void goToHeroDetailsActivity(Movie movie, int position);
     }
 
     interface Presenter extends BasePresenter {
-
-        public void onCreate();
-
-        public void loadMoviesList();
-
-        public void loadNextPageMovieList();
-
-        public void checkIfNeedRetry();
+        void onCreate();
+        void loadMoviesList();
+        void loadNextPageMovieList();
+        void checkIfNeedRetry();
     }
 }

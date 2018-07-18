@@ -1,4 +1,9 @@
 <resources>
   <string name="app_name">square</string>
   <string name="action_settings">Settings</string>
+  
+  <!-- movie detail -->
+  <string name="movie_detail_vote_average">Vote Average</string>
+  <string name="movie_detail_release_date">Release Date</string>
+  <string name="movie_detail_overview">Overview</string>
 </resources>

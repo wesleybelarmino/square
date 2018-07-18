@@ -2,6 +2,7 @@ package com.app.square.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,7 @@ import com.app.square.movies.di.MoviesModule;
 import com.app.square.movies.list.MoviesAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import io.reactivex.Observable;
+import java.io.Serializable;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -112,11 +114,21 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         moviesPresenter.onDestroy();
     }
 
-    public void goToHeroDetailsActivity(Movie movie) {
+    @Override public void goToHeroDetailsActivity(Movie movie, int position) {
+        Intent in = new Intent(this, MovieDetailActivity.class);
+        in.putExtra("movie", (Serializable) movie);
 
-        //Intent in = new Intent(this, MovieDetailActivity.class);
-        //in.putExtra("hero", (Serializable) movie);
-        //startActivity(in);
+        // Locate the ViewHolder for the clicked position.
+        RecyclerView.ViewHolder selectedViewHolder =
+            recyclerView.findViewHolderForAdapterPosition(position);
+        if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
+            return;
+        }
 
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+            makeSceneTransitionAnimation(this,
+                selectedViewHolder.itemView.findViewById(R.id.movies_list_item_poster),
+                "movie_poster");
+        startActivity(in, options.toBundle());
     }
 }

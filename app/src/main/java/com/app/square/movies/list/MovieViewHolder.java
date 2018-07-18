@@ -10,8 +10,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.app.square.R;
 import com.app.square.common.pojo.Movie;
+import com.app.square.util.Constants;
 import com.app.square.util.Utils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import io.reactivex.subjects.PublishSubject;
 
 public class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -40,7 +42,11 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
         rating.setText(movie.getVoteAverage()+"");
         ratingBar.setRating(movie.getVoteAverage()/2);
         year.setText(Utils.getReleaseYear(movie.getReleaseDate()));
-        String url = "https://image.tmdb.org/t/p/w500" + movie.getPosterPath();
-        Glide.with(view.getContext()).load(url).into(poster);
+        String url = Constants.BASE_URL_IMAGE+"/w500" + movie.getPosterPath();
+        Glide.with(view.getContext())
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(poster);
+
     }
 }
