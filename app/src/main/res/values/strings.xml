@@ -1,6 +1,8 @@
 <resources>
   <string name="app_name">square</string>
   <string name="action_settings">Settings</string>
+
+  <string name="connection_loose">Not connected</string>
   
   <!-- movie detail -->
   <string name="movie_detail_vote_average">Vote Average</string>

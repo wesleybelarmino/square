@@ -9,12 +9,28 @@
     tools:context=".movies.MoviesActivity"
     tools:showIn="@layout/activity_movies">
 
-
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/movies_list"
-      android:visibility="gone"
+  <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/movies_list"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ProgressBar
+        android:id="@+id/movies_progress_bar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="5dp"
+        android:padding="5dp"
+        android:visibility="gone" />
+  </LinearLayout>
+
 
   <include layout="@layout/content_movies_shimmer"/>
   
@@ -31,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textColor="@android:color/white"
-        android:text="Verifique a conexão"
+        android:text="@string/connection_loose"
         />
   </RelativeLayout>
 

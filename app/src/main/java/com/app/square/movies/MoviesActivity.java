@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +19,7 @@ import com.app.square.moviedetail.MovieDetailActivity;
 import com.app.square.movies.core.MoviesContract;
 import com.app.square.movies.di.DaggerMoviesComponent;
 import com.app.square.movies.di.MoviesModule;
+import com.app.square.movies.list.EndlessRecyclerOnScrollListener;
 import com.app.square.movies.list.MoviesAdapter;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import io.reactivex.Observable;
@@ -30,6 +32,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     @BindView(R.id.toolbar) Toolbar toolbar;
     //@BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.movies_list) RecyclerView recyclerView;
+    @BindView(R.id.movies_progress_bar) ProgressBar progressBar;
     @BindView(R.id.movies_shimmer_content) LinearLayout shimmerContent;
     @BindView(R.id.movies_shimmer_item_1) ShimmerFrameLayout shimmerItem1;
     @BindView(R.id.movies_shimmer_item_2) ShimmerFrameLayout shimmerItem2;
@@ -67,8 +70,15 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
         moviesAdapter = new MoviesAdapter();
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(moviesAdapter);
+
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(gridLayoutManager) {
+            @Override public void onLoadMore() {
+                loadMoreItems();
+            }
+        });
 
         moviesPresenter.onCreate();
     }
@@ -91,17 +101,14 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    @Override public void hasConnection() {
-        connectionLayout.setVisibility(View.GONE);
-        moviesPresenter.checkIfNeedRetry();
-    }
-
-    @Override public void loseConnection() {
-        connectionLayout.setVisibility(View.VISIBLE);
+    private void loadMoreItems(){
+        progressBar.setVisibility(View.VISIBLE);
+        moviesPresenter.loadNextPageMovieList();
     }
 
     @Override public void showMoviesList(List<Movie> movies) {
         moviesAdapter.addMovies(movies);
+        progressBar.setVisibility(View.GONE);
         stopShimmer();
     }
 
@@ -131,4 +138,14 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
                 "movie_poster");
         startActivity(in, options.toBundle());
     }
+
+    @Override public void hasConnection() {
+        connectionLayout.setVisibility(View.GONE);
+        moviesPresenter.checkIfNeedRetry();
+    }
+
+    @Override public void loseConnection() {
+        connectionLayout.setVisibility(View.VISIBLE);
+    }
+
 }

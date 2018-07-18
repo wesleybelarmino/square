@@ -32,7 +32,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         this.moviesView = view;
         this.dataManager = dataManager;
         this.moviesList = new ArrayList<>();
-        this.totalPages = 1;
+        this.totalPages = 100;
         this.subscriptions = subs;
     }
 
@@ -48,8 +48,9 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override public void loadNextPageMovieList() {
+        Log.d("presenter", "loadNextPageMovieList - totalPages: "+totalPages);
         if (currentPage < totalPages) {
-            loadMovieDiscover(currentPage++);
+            loadMovieDiscover(++currentPage);
         }
     }
 
@@ -65,6 +66,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     private void loadMovieDiscover(int page) {
+        Log.d("presenter", "loadMovieDiscover page:"+page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
         Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList(page);
         moviesResultObservable.subscribeOn(Schedulers.io())
