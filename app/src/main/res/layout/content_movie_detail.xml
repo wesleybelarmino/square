@@ -33,7 +33,7 @@
       android:layout_marginLeft="14dp"
       android:layout_marginRight="14dp"
       android:layout_marginTop="2dp"
-      app:cardBackgroundColor="@color/tagGray"
+      app:cardBackgroundColor="@android:color/white"
       app:cardCornerRadius="10dp"
       >
 
@@ -90,7 +90,7 @@
               android:layout_height="wrap_content"
               android:layout_below="@+id/movies_list_item_rating"
               android:layout_centerHorizontal="true"
-              android:background="@color/tagGray"
+              android:background="@android:color/white"
               android:isIndicator="true"
               android:numStars="5"
               android:padding="0dp"

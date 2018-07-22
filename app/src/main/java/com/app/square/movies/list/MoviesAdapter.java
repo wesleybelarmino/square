@@ -16,10 +16,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     private final PublishSubject<Integer> itemClicks = PublishSubject.create();
     ArrayList<Movie> moviesList = new ArrayList<>();
 
+    int start = 0;
+
     public void addMovies(List<Movie> list){
         moviesList.clear();
         moviesList.addAll(list);
-        notifyDataSetChanged();
+        notifyItemRangeChanged(start, moviesList.size() - 1);
+        start = moviesList.size() - 1;
     }
 
     public Observable<Integer> observeClicks() {
