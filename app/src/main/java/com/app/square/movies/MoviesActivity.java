@@ -2,10 +2,15 @@ package com.app.square.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -39,10 +44,14 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     @BindView(R.id.movies_shimmer_item_3) ShimmerFrameLayout shimmerItem3;
     @BindView(R.id.movies_shimmer_item_4) ShimmerFrameLayout shimmerItem4;
     @BindView(R.id.movies_list_connection_info) RelativeLayout connectionLayout;
+    @BindView(R.id.movies_drawer) DrawerLayout drawerLayout;
+    @BindView(R.id.movies_navigation_view) NavigationView navigationView;
 
     @Inject MoviesContract.Presenter moviesPresenter;
 
     private MoviesAdapter moviesAdapter;
+    private boolean isDrawerClosed = true;
+    private int currentDrawerId;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +66,9 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
         //action bar
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.most_popular));
 
         //fab.setOnClickListener(new View.OnClickListener() {
         //    @Override public void onClick(View view) {
@@ -80,7 +92,77 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
             }
         });
 
+        drawerToggle();
+        navigationAction();
+
         moviesPresenter.onCreate();
+    }
+
+    private void drawerToggle() {
+        ActionBarDrawerToggle actionBarDrawerToggle =
+            new ActionBarDrawerToggle(this,                  /* host Activity */
+                drawerLayout,         /* DrawerLayout object */
+                toolbar,  /* nav drawer icon to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description */
+                R.string.drawer_close  /* "close drawer" description */) {
+
+                /** Called when a drawer has settled in a completely closed state. */
+                public void onDrawerClosed(View view) {
+                    super.onDrawerClosed(view);
+                    isDrawerClosed = true;
+                }
+
+                /** Called when a drawer has settled in a completely open state. */
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    isDrawerClosed = false;
+                }
+            };
+
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+
+        // Set the drawer toggle as the DrawerListener
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        //calling sync state is necessay or else your icon wont show up
+        actionBarDrawerToggle.syncState();
+    }
+
+    private void navigationAction() {
+        currentDrawerId = R.id.drawer_item_most_popular;
+        navigationView.setNavigationItemSelectedListener(
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    if (item.getItemId() != currentDrawerId) {
+                        initShimmer();
+                        moviesAdapter.clear();
+
+                        if (item.isChecked()) {
+                            item.setChecked(false);
+                        } else {
+                            item.setChecked(true);
+                        }
+
+                        switch (item.getItemId()) {
+                            case R.id.drawer_item_most_popular:
+                                moviesPresenter.changeListToDiscoverPopularity();
+                                getSupportActionBar().setTitle(getString(R.string.most_popular));
+                                break;
+
+                            case R.id.drawer_item_best_rating:
+                                moviesPresenter.changeListToDiscoverRating();
+                                getSupportActionBar().setTitle(getString(R.string.best_rating));
+                                break;
+                        }
+
+                        currentDrawerId = item.getItemId();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
     }
 
     private void initShimmer() {
@@ -101,10 +183,12 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void loadMoreItems(){
+    private void loadMoreItems() {
         progressBar.setVisibility(View.VISIBLE);
         moviesPresenter.loadNextPageMovieList();
     }
+
+
 
     @Override public void showMoviesList(List<Movie> movies) {
         moviesAdapter.addMovies(movies);
@@ -114,11 +198,6 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
     @Override public Observable<Integer> itemClicks() {
         return moviesAdapter.observeClicks();
-    }
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-        moviesPresenter.onDestroy();
     }
 
     @Override public void goToHeroDetailsActivity(Movie movie, int position) {
@@ -148,4 +227,16 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         connectionLayout.setVisibility(View.VISIBLE);
     }
 
+    @Override public void onBackPressed() {
+        if (isDrawerClosed) {
+            super.onBackPressed();
+        } else {
+            drawerLayout.closeDrawers();
+        }
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        moviesPresenter.onDestroy();
+    }
 }

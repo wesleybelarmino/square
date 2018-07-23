@@ -26,4 +26,10 @@
     <item name="colorControlActivated">@color/blueSky</item>
   </style>
 
+  <style name="TextMenuDrawer" parent="android:Widget.TextView">
+    <item name="android:textColor">#FFFFFF</item>
+    <item name="android:textSize">@dimen/drawer_menu_font_size</item>
+  </style>
+
+
 </resources>

@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -63,6 +64,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         //action bar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         mMovie = (Movie) getIntent().getExtras().get("movie");
         showMovieInfo();
@@ -108,6 +115,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
             .into(bgPoster);
 
 
+        getSupportActionBar().setTitle(mMovie.getTitle());
         title.setText(mMovie.getOriginalTitle());
         averge.setText(mMovie.getVoteAverage()+"");
         avergeRating.setRating(mMovie.getVoteAverage()/2);

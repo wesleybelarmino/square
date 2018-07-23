@@ -18,8 +18,8 @@ public class DataManager {
         DaggerDataComponent.create().inject(this);
     }
 
-    public Observable<MoviesResult> getMoviesList(int page) {
-        return apiRequest.get().movieDiscover(API_KEY, "en-US", "popularity.desc",
+    public Observable<MoviesResult> getMoviesList(String sort_by, int page) {
+        return apiRequest.get().movieDiscover(API_KEY, "en-US", sort_by,
             "false","" + page);
     }
 }

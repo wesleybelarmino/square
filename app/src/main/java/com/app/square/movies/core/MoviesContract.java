@@ -14,8 +14,9 @@ public interface MoviesContract {
 
     interface Presenter extends BasePresenter {
         void onCreate();
-        void loadMoviesList();
         void loadNextPageMovieList();
         void checkIfNeedRetry();
+        void changeListToDiscoverRating();
+        void changeListToDiscoverPopularity();
     }
 }

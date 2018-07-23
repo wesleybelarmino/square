@@ -42,4 +42,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override public int getItemCount() {
         return moviesList.size();
     }
+
+    public void clear(){
+        start = 0;
+        moviesList.clear();
+        notifyDataSetChanged();
+    }
 }

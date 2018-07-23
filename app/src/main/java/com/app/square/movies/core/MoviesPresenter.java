@@ -4,6 +4,7 @@ import android.util.Log;
 import com.app.square.common.pojo.Movie;
 import com.app.square.common.pojo.MoviesResult;
 import com.app.square.data.DataManager;
+import com.app.square.util.Constants;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,6 +25,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     private int totalPages;
     private List<Movie> moviesList;
     private boolean notLoadContentByNetProblem = false;
+    private String discoverSortedBy;
 
     CompositeDisposable subscriptions;
 
@@ -38,10 +40,11 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     @Override public void onCreate() {
         subscriptions.add(respondToClick());
-        loadMoviesList();
+        discoverSortedBy = Constants.MOVIES_SORT_BY_MOST_POPULAR;
+        loadMoviesDiscoverList();
     }
 
-    @Override public void loadMoviesList() {
+    private void loadMoviesDiscoverList() {
         currentPage = 1;
         moviesList.clear();
         loadMovieDiscover(currentPage);
@@ -57,7 +60,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     @Override public void checkIfNeedRetry() {
         if (notLoadContentByNetProblem) {
             if (currentPage <= 1) {
-                loadMoviesList();
+                loadMoviesDiscoverList();
             } else {
                 currentPage--;
                 loadNextPageMovieList();
@@ -65,10 +68,21 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         }
     }
 
+    @Override public void changeListToDiscoverRating() {
+        discoverSortedBy = Constants.MOVIES_SORT_BY_BEST_RATING;
+        loadMoviesDiscoverList();
+    }
+
+    @Override public void changeListToDiscoverPopularity() {
+        discoverSortedBy = Constants.MOVIES_SORT_BY_MOST_POPULAR;
+        loadMoviesDiscoverList();
+    }
+
     private void loadMovieDiscover(int page) {
         Log.d("presenter", "loadMovieDiscover page:"+page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
-        Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList(page);
+        Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList
+            (discoverSortedBy, page);
         moviesResultObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MoviesResult>() {
