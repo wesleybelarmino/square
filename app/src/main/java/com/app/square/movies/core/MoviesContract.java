@@ -14,6 +14,7 @@ public interface MoviesContract {
 
     interface Presenter extends BasePresenter {
         void onCreate();
+        void onCreateSavedInstance(String discoverSortedBy, List<Movie> list);
         void loadNextPageMovieList();
         void checkIfNeedRetry();
         void changeListToDiscoverRating();

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/movies_list_item_card"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="250dp"
     android:layout_margin="5dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
@@ -18,41 +18,50 @@
 
     <ImageView
         android:id="@+id/movies_list_item_poster"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="166dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
         android:transitionName="movie_poster"
         />
+
+    <TextView
+        android:id="@+id/movies_list_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="4dp"
+        android:maxLines="6"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/movies_list_item_poster"
+        />
+
 
     <RelativeLayout
         android:id="@+id/movies_list_item_content_info"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/movies_list_item_poster"
+        android:layout_marginBottom="35dp"
         >
 
       <TextView
-          android:id="@+id/movies_list_item_title"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:visibility="gone"
-          />
-
-      <TextView
           android:id="@+id/movies_list_item_rating"
-          android:layout_centerHorizontal="true"
-          android:textStyle="bold"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_centerHorizontal="true"
           android:layout_marginTop="8dp"
+          android:textStyle="bold"
           />
 
       <RatingBar
           android:id="@+id/movies_list_item_ratingBar"
-          android:layout_below="@+id/movies_list_item_rating"
-          android:layout_centerHorizontal="true"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_below="@+id/movies_list_item_rating"
+          android:layout_centerHorizontal="true"
           android:background="@android:color/white"
           android:isIndicator="true"
           android:numStars="5"
@@ -71,23 +80,24 @@
         android:id="@+id/movies_list_item_year_content"
         android:layout_width="100dp"
         android:layout_height="30dp"
-        android:background="@color/tagGray"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="-44dp"
         android:layout_marginBottom="2dp"
-        android:rotation="-45"
+        android:layout_marginRight="-44dp"
+        android:background="@color/tagGray"
         android:gravity="center_horizontal"
+        android:rotation="-45"
         >
       <TextView
           android:id="@+id/movies_list_item_year"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textSize="10dp"
-          android:layout_marginTop="4dp"
           android:layout_marginRight="10dp"
+          android:layout_marginTop="4dp"
           android:maxLines="1"
-          android:text="2018"/>
+          android:text="2018"
+          android:textSize="10dp"
+          />
 
     </RelativeLayout>
 

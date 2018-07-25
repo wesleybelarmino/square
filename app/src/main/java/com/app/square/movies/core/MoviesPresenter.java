@@ -34,14 +34,25 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         this.moviesView = view;
         this.dataManager = dataManager;
         this.moviesList = new ArrayList<>();
-        this.totalPages = 100;
+        this.totalPages = 1000;
         this.subscriptions = subs;
+        this.currentPage = 1;
     }
 
     @Override public void onCreate() {
         subscriptions.add(respondToClick());
         discoverSortedBy = Constants.MOVIES_SORT_BY_MOST_POPULAR;
         loadMoviesDiscoverList();
+    }
+
+    @Override public void onCreateSavedInstance(String discoverSortedBy, List<Movie> list) {
+        Log.d("presenter", "onCreateSavedInstance discoverSortedBy:" + discoverSortedBy);
+        subscriptions.add(respondToClick());
+        this.discoverSortedBy = discoverSortedBy;
+        this.currentPage = list.size()/20;
+        moviesList.addAll(list);
+        notLoadContentByNetProblem = false;
+        moviesView.showMoviesList(moviesList);
     }
 
     private void loadMoviesDiscoverList() {
@@ -51,6 +62,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override public void loadNextPageMovieList() {
+        Log.d("presenter", "loadNextPageMovieList - currentPage: "+currentPage);
         Log.d("presenter", "loadNextPageMovieList - totalPages: "+totalPages);
         if (currentPage < totalPages) {
             loadMovieDiscover(++currentPage);
@@ -81,6 +93,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     private void loadMovieDiscover(int page) {
         Log.d("presenter", "loadMovieDiscover page:"+page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
+        Log.d("presenter", "loadDiscoverMovies discoverSortedBy:" + discoverSortedBy);
         Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList
             (discoverSortedBy, page);
         moviesResultObservable.subscribeOn(Schedulers.io())

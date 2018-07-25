@@ -9,6 +9,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.app.square.R;
+import com.app.square.common.base.BaseViewHolder;
 import com.app.square.common.pojo.Movie;
 import com.app.square.util.Constants;
 import com.app.square.util.Utils;
@@ -16,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import io.reactivex.subjects.PublishSubject;
 
-public class MovieViewHolder extends RecyclerView.ViewHolder {
+public class MovieViewHolder extends BaseViewHolder {
 
     View view;
 
@@ -25,6 +26,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.movies_list_item_year) TextView year;
     @BindView(R.id.movies_list_item_rating) TextView rating;
     @BindView(R.id.movies_list_item_ratingBar) RatingBar ratingBar;
+    @BindView(R.id.movies_list_item_title) TextView title;
 
     public MovieViewHolder(View itemView, final PublishSubject<Integer> clickSubject) {
         super(itemView);
@@ -38,7 +40,9 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
         poster.setClipToOutline(true);
     }
 
-    public void bind(Movie movie) {
+    @Override public void bind(Object object) {
+        Movie movie = (Movie) object;
+        title.setText(movie.getTitle());
         rating.setText(movie.getVoteAverage()+"");
         ratingBar.setRating(movie.getVoteAverage()/2);
         year.setText(Utils.getReleaseYear(movie.getReleaseDate()));

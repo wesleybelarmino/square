@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import com.app.square.movies.di.DaggerMoviesComponent;
 import com.app.square.movies.di.MoviesModule;
 import com.app.square.movies.list.EndlessRecyclerOnScrollListener;
 import com.app.square.movies.list.MoviesAdapter;
+import com.app.square.util.Constants;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import io.reactivex.Observable;
 import java.io.Serializable;
@@ -37,7 +39,6 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     @BindView(R.id.toolbar) Toolbar toolbar;
     //@BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.movies_list) RecyclerView recyclerView;
-    @BindView(R.id.movies_progress_bar) ProgressBar progressBar;
     @BindView(R.id.movies_shimmer_content) LinearLayout shimmerContent;
     @BindView(R.id.movies_shimmer_item_1) ShimmerFrameLayout shimmerItem1;
     @BindView(R.id.movies_shimmer_item_2) ShimmerFrameLayout shimmerItem2;
@@ -68,7 +69,6 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle(getString(R.string.most_popular));
 
         //fab.setOnClickListener(new View.OnClickListener() {
         //    @Override public void onClick(View view) {
@@ -79,10 +79,22 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         //});
 
         initShimmer();
-
         moviesAdapter = new MoviesAdapter();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int i = moviesAdapter.getItemViewType(position);
+                if (i == moviesAdapter.VIEW_TYPE_ITEM) {
+                    return 1;
+                } else if (i == moviesAdapter.VIEW_TYPE_PROGRESSBAR) {
+                    return 2; //number of columns of the grid
+                } else {
+                    return -1;
+                }
+            }
+        });
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(moviesAdapter);
 
@@ -95,7 +107,30 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         drawerToggle();
         navigationAction();
 
-        moviesPresenter.onCreate();
+        Log.d("main", "savedInstanceState: "+savedInstanceState);
+
+        if(savedInstanceState == null){
+            getSupportActionBar().setTitle(getString(R.string.most_popular));
+            moviesPresenter.onCreate();
+
+        }else{
+            String discoverSortedBy = savedInstanceState.getString(Constants
+                .MOVIES_SAVED_INSTANCE_DISCOVER_SORTED_BY_KEY);
+
+            if(discoverSortedBy.equals(Constants.MOVIES_SORT_BY_MOST_POPULAR)){
+                getSupportActionBar().setTitle(getString(R.string.most_popular));
+                currentDrawerId = R.id.drawer_item_most_popular;
+            }else{
+                getSupportActionBar().setTitle(getString(R.string.best_rating));
+                currentDrawerId = R.id.drawer_item_best_rating;
+            }
+
+            moviesPresenter.onCreateSavedInstance(discoverSortedBy, (List<Movie>)savedInstanceState.getSerializable(Constants
+                .MOVIES_SAVED_INSTANCE_LIST_KEY));
+        }
+
+
+
     }
 
     private void drawerToggle() {
@@ -184,15 +219,14 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     }
 
     private void loadMoreItems() {
-        progressBar.setVisibility(View.VISIBLE);
+        moviesAdapter.enableFooter(true);
         moviesPresenter.loadNextPageMovieList();
     }
 
 
-
     @Override public void showMoviesList(List<Movie> movies) {
         moviesAdapter.addMovies(movies);
-        progressBar.setVisibility(View.GONE);
+        moviesAdapter.enableFooter(false);
         stopShimmer();
     }
 
@@ -201,6 +235,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     }
 
     @Override public void goToHeroDetailsActivity(Movie movie, int position) {
+        Log.d("main","goToHeroDetailsActivity()");
         Intent in = new Intent(this, MovieDetailActivity.class);
         in.putExtra("movie", (Serializable) movie);
 
@@ -233,6 +268,16 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         } else {
             drawerLayout.closeDrawers();
         }
+    }
+
+    @Override protected void onSaveInstanceState(Bundle savedInstanceState) {
+
+        String discoverSortedBy = (currentDrawerId == R.id.drawer_item_most_popular)? Constants
+            .MOVIES_SORT_BY_MOST_POPULAR: Constants.MOVIES_SORT_BY_BEST_RATING;
+
+        savedInstanceState.putSerializable(Constants.MOVIES_SAVED_INSTANCE_LIST_KEY, moviesAdapter.getList());
+        savedInstanceState.putString(Constants.MOVIES_SAVED_INSTANCE_DISCOVER_SORTED_BY_KEY, discoverSortedBy);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override protected void onDestroy() {
