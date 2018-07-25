@@ -77,44 +77,49 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     }
 
     private void showMovieInfo() {
-        posterUrl = Constants.BASE_URL_IMAGE+"/w500" + mMovie.getPosterPath();
 
-        posterPaletteColor = R.color.colorPrimary;
+        if(mMovie.getPosterPath() != null){
+            posterUrl = Constants.BASE_URL_IMAGE+"/w500" + mMovie.getPosterPath();
 
-        Glide.with(this)
-            .load(posterUrl)
-            .asBitmap()
-            .transcode(new PaletteBitmapTranscoder(this), PaletteBitmap.class)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(new ImageViewTarget<PaletteBitmap>(poster) {
-                @Override protected void setResource(PaletteBitmap resource) {
-                    super.view.setImageBitmap(resource.bitmap);
-                    Palette p = resource.palette;
-                    posterPaletteColor = p.getMutedColor(
-                        ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary));
+            posterPaletteColor = R.color.colorPrimary;
 
-                    //set color action bar
-                    toolbar.setBackground(
-                        new ColorDrawable(Utils.manipulateColor(posterPaletteColor, 0.62f)));
+            Glide.with(this)
+                .load(posterUrl)
+                .asBitmap()
+                .transcode(new PaletteBitmapTranscoder(this), PaletteBitmap.class)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new ImageViewTarget<PaletteBitmap>(poster) {
+                    @Override protected void setResource(PaletteBitmap resource) {
+                        super.view.setImageBitmap(resource.bitmap);
+                        Palette p = resource.palette;
+                        posterPaletteColor = p.getMutedColor(
+                            ContextCompat.getColor(MovieDetailActivity.this, R.color.colorPrimary));
 
-                    //set color status bar
-                    getWindow().setStatusBarColor(Utils.manipulateColor(posterPaletteColor, 0.32f));
+                        //set color action bar
+                        toolbar.setBackground(
+                            new ColorDrawable(Utils.manipulateColor(posterPaletteColor, 0.62f)));
 
-
-                    supportStartPostponedEnterTransition();
-
-                }
-            });
-
-        //String posterBgUrl = Constants.BASE_URL_IMAGE+"/w500" + mMovie.getBackdropPath();
-        Glide.with(MovieDetailActivity.this)
-            .load(posterUrl)
-            .asBitmap()
-            .transform(new BlurTransformation(MovieDetailActivity.this))
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(bgPoster);
+                        //set color status bar
+                        getWindow().setStatusBarColor(Utils.manipulateColor(posterPaletteColor, 0.32f));
 
 
+                        supportStartPostponedEnterTransition();
+
+                    }
+                });
+
+            //String posterBgUrl = Constants.BASE_URL_IMAGE+"/w500" + mMovie.getBackdropPath();
+            Glide.with(MovieDetailActivity.this)
+                .load(posterUrl)
+                .asBitmap()
+                .transform(new BlurTransformation(MovieDetailActivity.this))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(bgPoster);
+
+        }else{
+            supportStartPostponedEnterTransition();
+        }
+        
         getSupportActionBar().setTitle(mMovie.getTitle());
         title.setText(mMovie.getOriginalTitle());
         averge.setText(mMovie.getVoteAverage()+"");

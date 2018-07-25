@@ -191,6 +191,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
                                 break;
                         }
 
+                        drawerLayout.closeDrawers();
                         currentDrawerId = item.getItemId();
                         return true;
                     } else {

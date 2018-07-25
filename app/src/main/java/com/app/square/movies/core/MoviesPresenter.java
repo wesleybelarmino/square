@@ -49,7 +49,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         Log.d("presenter", "onCreateSavedInstance discoverSortedBy:" + discoverSortedBy);
         subscriptions.add(respondToClick());
         this.discoverSortedBy = discoverSortedBy;
-        this.currentPage = list.size()/20;
+        this.currentPage = list.size() / 20;
         moviesList.addAll(list);
         notLoadContentByNetProblem = false;
         moviesView.showMoviesList(moviesList);
@@ -62,8 +62,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     @Override public void loadNextPageMovieList() {
-        Log.d("presenter", "loadNextPageMovieList - currentPage: "+currentPage);
-        Log.d("presenter", "loadNextPageMovieList - totalPages: "+totalPages);
+        Log.d("presenter", "loadNextPageMovieList - currentPage: " + currentPage);
+        Log.d("presenter", "loadNextPageMovieList - totalPages: " + totalPages);
         if (currentPage < totalPages) {
             loadMovieDiscover(++currentPage);
         }
@@ -91,11 +91,11 @@ public class MoviesPresenter implements MoviesContract.Presenter {
     }
 
     private void loadMovieDiscover(int page) {
-        Log.d("presenter", "loadMovieDiscover page:"+page);
+        Log.d("presenter", "loadMovieDiscover page:" + page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
         Log.d("presenter", "loadDiscoverMovies discoverSortedBy:" + discoverSortedBy);
-        Observable<MoviesResult> moviesResultObservable = dataManager.getMoviesList
-            (discoverSortedBy, page);
+        Observable<MoviesResult> moviesResultObservable =
+            dataManager.getMoviesList(discoverSortedBy, page);
         moviesResultObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MoviesResult>() {
