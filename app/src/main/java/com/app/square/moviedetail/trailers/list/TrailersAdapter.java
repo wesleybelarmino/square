@@ -17,7 +17,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final PublishSubject<Integer> itemClicks = PublishSubject.create();
     private ArrayList<Trailer> trailersList = new ArrayList<>();
 
-    public void addTrailers(List<Trailer> trailers){
+    public void addTrailers(List<Trailer> trailers) {
         trailersList.clear();
         trailersList.addAll(trailers);
     }
@@ -35,7 +35,10 @@ public class TrailersAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
         Trailer trailer = trailersList.get(position);
         holder.bind(trailer);
+    }
 
+    public ArrayList<Trailer> getList() {
+        return trailersList;
     }
 
     @Override public int getItemCount() {

@@ -93,15 +93,23 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
 
         //reviews
         reviewsAdapter = new ReviewsAdapter();
-        LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this,
-            LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager reviewsLayoutManager =
+            new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewReviews.setLayoutManager(reviewsLayoutManager);
         recyclerViewReviews.setAdapter(reviewsAdapter);
         recyclerViewReviews.setNestedScrollingEnabled(false);
 
+        if (savedInstanceState == null) {
+            showTrailers();
+            showReviews();
+        } else {
+            showTrailers((List<Trailer>) savedInstanceState.getSerializable(
+                Constants.MOVIES_SAVED_INSTANCE_TRAILERS_KEY));
+            showReviews((List<Review>) savedInstanceState.getSerializable(
+                Constants.MOVIES_SAVED_INSTANCE_REVIEWS_KEY));
+        }
+
         showMovieInfo();
-        showTrailers();
-        showReviews();
     }
 
     private void showMovieInfo() {
@@ -152,7 +160,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         avergeRating.setRating(mMovie.getVoteAverage() / 2);
         releaseDate.setText(mMovie.getReleaseDate());
         overview.setText(mMovie.getOverview());
-
     }
 
     private void showTrailers() {
@@ -200,16 +207,23 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     }
 
     @Override public void showReviews(List<Review> reviews) {
-        if (reviews.size() > 0){
+        if (reviews.size() > 0) {
             recyclerViewReviews.setVisibility(View.VISIBLE);
             reviewsAdapter.addReviews(reviews);
             reviewsAdapter.notifyDataSetChanged();
         }
     }
 
+    @Override protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable(Constants.MOVIES_SAVED_INSTANCE_TRAILERS_KEY,
+            trailersAdapter.getList());
+        savedInstanceState.putSerializable(Constants.MOVIES_SAVED_INSTANCE_REVIEWS_KEY,
+            reviewsAdapter.getList());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
     @Override protected void onDestroy() {
         super.onDestroy();
         movieDetailPresenter.onDestroy();
     }
-
 }

@@ -7,14 +7,12 @@ import android.view.ViewGroup;
 import com.app.square.R;
 import com.app.square.common.base.BaseViewHolder;
 import com.app.square.moviedetail.reviews.pojo.Review;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    private List<Review> reviewList = new ArrayList<>();
+    private ArrayList<Review> reviewList = new ArrayList<>();
 
     public void addReviews(List<Review> reviews) {
         reviewList.clear();
@@ -30,6 +28,10 @@ public class ReviewsAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
         Review review = reviewList.get(position);
         holder.bind(review);
+    }
+
+    public ArrayList<Review> getList() {
+        return reviewList;
     }
 
     @Override public int getItemCount() {
