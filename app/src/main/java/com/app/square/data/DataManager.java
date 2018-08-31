@@ -1,11 +1,11 @@
 package com.app.square.data;
 
 import com.app.square.common.pojo.MoviesResult;
+import com.app.square.moviedetail.reviews.pojo.ReviewsResult;
+import com.app.square.moviedetail.trailers.pojo.TrailersResult;
 import com.app.square.data.di.DaggerDataComponent;
 import com.app.square.data.networking.ApiRequest;
 import io.reactivex.Observable;
-import java.util.HashMap;
-import java.util.Map;
 import javax.inject.Inject;
 
 public class DataManager {
@@ -22,4 +22,13 @@ public class DataManager {
         return apiRequest.get().movieDiscover(API_KEY, "en-US", sort_by,
             "false","" + page);
     }
+
+    public Observable<TrailersResult> getTrailersByMovie(int movie_id){
+        return apiRequest.get().trailersByMovie(movie_id, API_KEY, "en-US");
+    }
+
+    public Observable<ReviewsResult> getReviewsByMovie(int movie_id, int page){
+        return apiRequest.get().reviewsByMovie(movie_id, API_KEY, "en-US",""+page);
+    }
+
 }

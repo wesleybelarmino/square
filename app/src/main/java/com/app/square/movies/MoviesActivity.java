@@ -240,18 +240,20 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         Intent in = new Intent(this, MovieDetailActivity.class);
         in.putExtra("movie", (Serializable) movie);
 
-        // Locate the ViewHolder for the clicked position.
-        RecyclerView.ViewHolder selectedViewHolder =
-            recyclerView.findViewHolderForAdapterPosition(position);
-        if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
-            return;
-        }
+        startActivity(in);
 
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-            makeSceneTransitionAnimation(this,
-                selectedViewHolder.itemView.findViewById(R.id.movies_list_item_poster),
-                "movie_poster");
-        startActivity(in, options.toBundle());
+        //// Locate the ViewHolder for the clicked position.
+        //RecyclerView.ViewHolder selectedViewHolder =
+        //    recyclerView.findViewHolderForAdapterPosition(position);
+        //if (selectedViewHolder == null || selectedViewHolder.itemView == null) {
+        //    return;
+        //}
+        //
+        //ActivityOptionsCompat options = ActivityOptionsCompat.
+        //    makeSceneTransitionAnimation(this,
+        //        selectedViewHolder.itemView.findViewById(R.id.movies_list_item_poster),
+        //        "movie_poster");
+        //startActivity(in, options.toBundle());
     }
 
     @Override public void hasConnection() {
