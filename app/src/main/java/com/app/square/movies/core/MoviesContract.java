@@ -19,5 +19,6 @@ public interface MoviesContract {
         void checkIfNeedRetry();
         void changeListToDiscoverRating();
         void changeListToDiscoverPopularity();
+        void changeListToFavMovies();
     }
 }

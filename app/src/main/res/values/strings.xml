@@ -3,12 +3,13 @@
   <string name="action_settings">Settings</string>
 
   <string name="connection_loose">Not connected</string>
-  
+
   <string name="most_popular">Most Popular</string>
   <string name="best_rating">Best Rating</string>
+  <string name="favorites">Favorites</string>
   <string name="drawer_open">open</string>
   <string name="drawer_close">close</string>
-  
+
   <!-- movie detail -->
   <string name="movie_detail_vote_average">Vote Average</string>
   <string name="movie_detail_release_date">Release Date</string>

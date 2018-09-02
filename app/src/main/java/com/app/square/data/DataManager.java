@@ -3,7 +3,7 @@ package com.app.square.data;
 import android.arch.persistence.room.Room;
 import com.app.square.SquareApp;
 import com.app.square.common.pojo.MoviesResult;
-import com.app.square.data.local.room.DaoMovie;
+import com.app.square.data.local.room.DaoFavMovie;
 import com.app.square.data.local.room.SquareDatabase;
 import com.app.square.moviedetail.reviews.pojo.ReviewsResult;
 import com.app.square.moviedetail.trailers.pojo.TrailersResult;
@@ -42,7 +42,7 @@ public class DataManager {
         return apiRequest.get().reviewsByMovie(movie_id, API_KEY, "en-US",""+page);
     }
 
-    public DaoMovie getDaoMovie(){
+    public DaoFavMovie getDaoFavMovie(){
         return squareDatabase.daoMovie();
     }
 

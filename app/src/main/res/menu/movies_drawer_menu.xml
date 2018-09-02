@@ -13,5 +13,11 @@
         android:checked="false"
         android:title="@string/best_rating" />
 
+    <item
+        android:id="@+id/drawer_item_fav"
+        android:checked="false"
+        android:title="@string/favorites" />
+
+
   </group>
 </menu>

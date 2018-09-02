@@ -90,6 +90,20 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         loadMoviesDiscoverList();
     }
 
+    @Override public void changeListToFavMovies() {
+        moviesList.removeAll(moviesList);
+        dataManager.getDaoFavMovie()
+            .getAll()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<List<Movie>>() {
+                @Override public void accept(List<Movie> movies) throws Exception {
+                    moviesList.addAll(movies);
+                    moviesView.showMoviesList(moviesList);
+                }
+            });
+    }
+
     private void loadMovieDiscover(int page) {
         Log.d("presenter", "loadMovieDiscover page:" + page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);

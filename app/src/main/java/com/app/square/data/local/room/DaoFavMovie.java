@@ -9,13 +9,13 @@ import io.reactivex.Maybe;
 import java.util.List;
 
 @Dao
-public interface DaoMovie {
+public interface DaoFavMovie {
 
     @Insert
     void insert(Movie movie);
 
     @Query("SELECT * FROM movie")
-    Maybe<List<Movie>> fetchAll();
+    Maybe<List<Movie>> getAll();
 
     @Query("SELECT * FROM movie where id = :id")
     Maybe<Movie> findById(int id);

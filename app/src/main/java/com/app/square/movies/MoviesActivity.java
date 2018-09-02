@@ -79,6 +79,10 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
         initShimmer();
         moviesAdapter = new MoviesAdapter();
 
+        drawerToggle();
+        navigationAction();
+
+        //recyclerview
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -98,12 +102,12 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(gridLayoutManager) {
             @Override public void onLoadMore() {
-                loadMoreItems();
+                if(currentDrawerId != R.id.drawer_item_fav){
+                    loadMoreItems();
+                }
             }
         });
 
-        drawerToggle();
-        navigationAction();
 
         Log.d("main", "savedInstanceState: "+savedInstanceState);
 
@@ -118,16 +122,19 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
             if(discoverSortedBy.equals(Constants.MOVIES_SORT_BY_MOST_POPULAR)){
                 getSupportActionBar().setTitle(getString(R.string.most_popular));
                 currentDrawerId = R.id.drawer_item_most_popular;
-            }else{
+
+            }else if(discoverSortedBy.equals(Constants.MOVIES_SORT_BY_BEST_RATING)){
                 getSupportActionBar().setTitle(getString(R.string.best_rating));
                 currentDrawerId = R.id.drawer_item_best_rating;
+
+            }else {
+                getSupportActionBar().setTitle(getString(R.string.favorites));
+                currentDrawerId = R.id.drawer_item_fav;
             }
 
             moviesPresenter.onCreateSavedInstance(discoverSortedBy, (List<Movie>)savedInstanceState.getSerializable(Constants
                 .MOVIES_SAVED_INSTANCE_LIST_KEY));
         }
-
-
 
     }
 
@@ -187,6 +194,11 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
                                 moviesPresenter.changeListToDiscoverRating();
                                 getSupportActionBar().setTitle(getString(R.string.best_rating));
                                 break;
+
+                            case R.id.drawer_item_fav:
+                                moviesPresenter.changeListToFavMovies();
+                                getSupportActionBar().setTitle(getString(R.string.favorites));
+                                break;
                         }
 
                         drawerLayout.closeDrawers();
@@ -198,6 +210,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
                 }
             });
     }
+
 
     private void initShimmer() {
         recyclerView.setVisibility(View.GONE);
@@ -218,6 +231,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     }
 
     private void loadMoreItems() {
+        Log.d("main","loadMoreItems()");
         moviesAdapter.enableFooter(true);
         moviesPresenter.loadNextPageMovieList();
     }
@@ -226,6 +240,9 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     @Override public void showMoviesList(List<Movie> movies) {
         moviesAdapter.addMovies(movies);
         moviesAdapter.enableFooter(false);
+        if(currentDrawerId == R.id.drawer_item_fav){
+            moviesAdapter.notifyDataSetChanged();
+        }
         stopShimmer();
     }
 
@@ -273,12 +290,27 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
     @Override protected void onSaveInstanceState(Bundle savedInstanceState) {
 
-        String discoverSortedBy = (currentDrawerId == R.id.drawer_item_most_popular)? Constants
-            .MOVIES_SORT_BY_MOST_POPULAR: Constants.MOVIES_SORT_BY_BEST_RATING;
+        String discoverSortedBy =  Constants.MOVIES_SORT_BY_MOST_POPULAR;
+
+        if(currentDrawerId == R.id.drawer_item_best_rating){
+            discoverSortedBy = Constants.MOVIES_SORT_BY_MOST_POPULAR;
+
+        }else if(currentDrawerId == R.id.drawer_item_fav){
+            discoverSortedBy = Constants.MOVIES_SORT_BY_FAVORITES;
+
+        }
+
 
         savedInstanceState.putSerializable(Constants.MOVIES_SAVED_INSTANCE_LIST_KEY, moviesAdapter.getList());
         savedInstanceState.putString(Constants.MOVIES_SAVED_INSTANCE_DISCOVER_SORTED_BY_KEY, discoverSortedBy);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if(currentDrawerId == R.id.drawer_item_fav){
+            moviesPresenter.changeListToFavMovies();
+        }
     }
 
     @Override protected void onDestroy() {

@@ -111,7 +111,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     }
 
     @Override public void checkIsFavSaved(int movieId) {
-        dataManager.getDaoMovie()
+        dataManager.getDaoFavMovie()
             .findById(movieId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -136,7 +136,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override public void saveFavMovie(final Movie movie) {
         Completable.fromAction(new Action() {
             @Override public void run() throws Exception {
-                dataManager.getDaoMovie().insert(movie);
+                dataManager.getDaoFavMovie().insert(movie);
             }
         })
             .observeOn(AndroidSchedulers.mainThread())
@@ -158,7 +158,7 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     @Override public void deleteFavMovie(final Movie movie) {
         Completable.fromAction(new Action() {
             @Override public void run() throws Exception {
-                dataManager.getDaoMovie().delete(movie);
+                dataManager.getDaoFavMovie().delete(movie);
             }
         })
             .observeOn(AndroidSchedulers.mainThread())
