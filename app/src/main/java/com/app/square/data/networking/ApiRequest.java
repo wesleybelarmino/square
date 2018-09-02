@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiRequest implements IApiRequests {
 
-    private final String BASE_URL = "https://api.themoviedb.org/";
+    private final String BASE_URL = "https://api.themoviedb.org/3/";
     private Retrofit retrofit;
 
     public ApiRequest() {

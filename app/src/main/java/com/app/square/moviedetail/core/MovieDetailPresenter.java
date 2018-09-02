@@ -1,16 +1,21 @@
 package com.app.square.moviedetail.core;
 
 import android.util.Log;
+import com.app.square.common.pojo.Movie;
 import com.app.square.data.DataManager;
 import com.app.square.moviedetail.reviews.pojo.Review;
 import com.app.square.moviedetail.reviews.pojo.ReviewsResult;
 import com.app.square.moviedetail.trailers.pojo.Trailer;
 import com.app.square.moviedetail.trailers.pojo.TrailersResult;
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import java.io.IOException;
@@ -51,7 +56,9 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
                 @Override public void onNext(TrailersResult trailersResult) {
                     Log.d("MovieDetailPresenter", "onNext");
-                    trailerList.addAll(trailersResult.getResults());
+                    if (trailersResult != null && trailersResult.getResults() != null) {
+                        trailerList.addAll(trailersResult.getResults());
+                    }
                 }
 
                 @Override public void onError(Throwable e) {
@@ -79,15 +86,13 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
             .subscribe(new Observer<ReviewsResult>() {
                 @Override public void onSubscribe(Disposable d) {
                     Log.d("MovieDetailPresenter", "onSubscribe");
-
                 }
 
                 @Override public void onNext(ReviewsResult reviewsResult) {
                     Log.d("MovieDetailPresenter", "onNext");
-                    if(reviewsResult != null && reviewsResult.getResults() != null){
+                    if (reviewsResult != null && reviewsResult.getResults() != null) {
                         reviewList.addAll(reviewsResult.getResults());
                     }
-
                 }
 
                 @Override public void onError(Throwable e) {
@@ -98,27 +103,88 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
                 }
 
                 @Override public void onComplete() {
-                    Log.d("MovieDetailPresenter", "onComplete: "+reviewList.size());
+                    Log.d("MovieDetailPresenter", "onComplete: " + reviewList.size());
                     reviewsLoadContentByNetProblem = false;
                     mMovieDetailView.showReviews(reviewList);
-
                 }
             });
     }
 
-    @Override public boolean isFavMovie(int movieId) {
-        return false;
+    @Override public void checkIsFavSaved(int movieId) {
+        dataManager.getDaoMovie()
+            .findById(movieId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new MaybeObserver<Movie>() {
+                @Override public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override public void onSuccess(Movie movie) {
+                    mMovieDetailView.setFavMovie();
+                    Log.d("MovieDetailPresenter", "checkIsFavSaved-onSuccess: " + movie);
+                }
+
+                @Override public void onError(Throwable e) {
+                }
+
+                @Override public void onComplete() {
+                }
+            });
+    }
+
+    @Override public void saveFavMovie(final Movie movie) {
+        Completable.fromAction(new Action() {
+            @Override public void run() throws Exception {
+                dataManager.getDaoMovie().insert(movie);
+            }
+        })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(new CompletableObserver() {
+                @Override public void onSubscribe(Disposable d) {
+                }
+
+                @Override public void onComplete() {
+                    Log.d("MovieDetailPresenter", "saveFavMovie-onComplete" );
+                }
+
+                @Override public void onError(Throwable e) {
+                    Log.d("MovieDetailPresenter", "saveFavMovie-onError" );
+                }
+            });
+    }
+
+    @Override public void deleteFavMovie(final Movie movie) {
+        Completable.fromAction(new Action() {
+            @Override public void run() throws Exception {
+                dataManager.getDaoMovie().delete(movie);
+            }
+        })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(new CompletableObserver() {
+                @Override public void onSubscribe(Disposable d) {
+                }
+
+                @Override public void onComplete() {
+                    Log.d("MovieDetailPresenter", "deleteFavMovie-onComplete" );
+                }
+
+                @Override public void onError(Throwable e) {
+                    Log.d("MovieDetailPresenter", "deleteFavMovie-onError" );
+                }
+            });
     }
 
     @Override public void checkIfNeedRetry(int movieId) {
-        if(trailersLoadContentByNetProblem){
+        if (trailersLoadContentByNetProblem) {
             loadTrailers(movieId);
         }
 
-        if(reviewsLoadContentByNetProblem){
+        if (reviewsLoadContentByNetProblem) {
             loadReviews(movieId);
         }
-
     }
 
     private Disposable respondToTrailerClick() {
@@ -132,7 +198,5 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
     @Override public void onDestroy() {
         subscriptionsTrailer.clear();
-        trailerList = null;
-        reviewList = null;
     }
 }

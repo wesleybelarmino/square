@@ -2,7 +2,6 @@ package com.app.square.common.base;
 
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
-import com.app.square.SquareApp;
 import com.github.pwittchen.reactivenetwork.library.rx2.Connectivity;
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -17,7 +16,7 @@ public abstract class BaseActivity extends AppCompatActivity {
   @Override protected void onResume() {
     super.onResume();
 
-    networkDisposable = ReactiveNetwork.observeNetworkConnectivity(SquareApp.getContext())
+    networkDisposable = ReactiveNetwork.observeNetworkConnectivity(getApplicationContext())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Consumer<Connectivity>() {

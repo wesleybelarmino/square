@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.app.square.R;
 import com.app.square.common.base.BaseActivity;
 import com.app.square.common.palette.BlurTransformation;
@@ -35,6 +36,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.like.LikeButton;
+import com.like.OnLikeListener;
 import io.reactivex.Observable;
 import java.util.List;
 import javax.inject.Inject;
@@ -49,7 +51,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @BindView(R.id.movie_detail_average_ratingBar) RatingBar avergeRating;
     @BindView(R.id.movie_detail_release_date) TextView releaseDate;
     @BindView(R.id.movie_detail_overview) TextView overview;
-    @BindView(R.id.movie_detail_fav_button) LikeButton likeButton;
+    @BindView(R.id.movie_detail_fav_button) LikeButton favButton;
     @BindView(R.id.movies_detail_trailers_list) RecyclerView recyclerViewTrailers;
     @BindView(R.id.movies_detail_reviews_list) RecyclerView recyclerViewReviews;
     @BindView(R.id.movies_detail_connection_info) RelativeLayout connectionLayout;
@@ -103,8 +105,20 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
 
         mMovie = (Movie) getIntent().getExtras().get(Constants.MOVIE_SAVED_INSTANCE);
 
-        //set fav
-        likeButton.setLiked(movieDetailPresenter.isFavMovie(mMovie.getId()));
+        //fav movie
+        movieDetailPresenter.checkIsFavSaved(mMovie.getId());
+        favButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                movieDetailPresenter.saveFavMovie(mMovie);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                movieDetailPresenter.deleteFavMovie(mMovie);
+            }
+        });
+
 
         if (savedInstanceState == null) {
             showTrailers();
@@ -186,6 +200,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         connectionLayout.setVisibility(View.VISIBLE);
     }
 
+
     @Override public void showTrailers(List<Trailer> trailers) {
         if (trailers.size() > 0) {
             recyclerViewTrailers.setVisibility(View.VISIBLE);
@@ -220,6 +235,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
             reviewsAdapter.addReviews(reviews);
             reviewsAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override public void setFavMovie() {
+        //set fav
+        favButton.setLiked(true);
     }
 
     @Override protected void onSaveInstanceState(Bundle savedInstanceState) {
