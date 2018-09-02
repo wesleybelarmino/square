@@ -13,6 +13,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
     private CompositeDisposable subscriptionsTrailer;
     private List<Trailer> trailerList;
     private List<Review> reviewList;
+    private boolean trailersLoadContentByNetProblem = false;
+    private boolean reviewsLoadContentByNetProblem = false;
 
     public MovieDetailPresenter(MovieDetailContract.View movieDetailView, DataManager dataManager,
         CompositeDisposable subs) {
@@ -53,10 +56,14 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
                 @Override public void onError(Throwable e) {
                     Log.d("MovieDetailPresenter", "onError: " + e.toString());
+                    if (e instanceof IOException) {
+                        trailersLoadContentByNetProblem = true;
+                    }
                 }
 
                 @Override public void onComplete() {
                     Log.d("MovieDetailPresenter", "onComplete");
+                    trailersLoadContentByNetProblem = false;
                     mMovieDetailView.showTrailers(trailerList);
                 }
             });
@@ -85,15 +92,33 @@ public class MovieDetailPresenter implements MovieDetailContract.Presenter {
 
                 @Override public void onError(Throwable e) {
                     Log.d("MovieDetailPresenter", "onError: " + e.toString());
-
+                    if (e instanceof IOException) {
+                        reviewsLoadContentByNetProblem = true;
+                    }
                 }
 
                 @Override public void onComplete() {
                     Log.d("MovieDetailPresenter", "onComplete: "+reviewList.size());
+                    reviewsLoadContentByNetProblem = false;
                     mMovieDetailView.showReviews(reviewList);
 
                 }
             });
+    }
+
+    @Override public boolean isFavMovie(int movieId) {
+        return false;
+    }
+
+    @Override public void checkIfNeedRetry(int movieId) {
+        if(trailersLoadContentByNetProblem){
+            loadTrailers(movieId);
+        }
+
+        if(reviewsLoadContentByNetProblem){
+            loadReviews(movieId);
+        }
+
     }
 
     private Disposable respondToTrailerClick() {

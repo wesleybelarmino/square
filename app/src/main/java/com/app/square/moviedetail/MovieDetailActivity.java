@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +34,7 @@ import com.app.square.util.Utils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.ImageViewTarget;
+import com.like.LikeButton;
 import io.reactivex.Observable;
 import java.util.List;
 import javax.inject.Inject;
@@ -47,8 +49,10 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     @BindView(R.id.movie_detail_average_ratingBar) RatingBar avergeRating;
     @BindView(R.id.movie_detail_release_date) TextView releaseDate;
     @BindView(R.id.movie_detail_overview) TextView overview;
+    @BindView(R.id.movie_detail_fav_button) LikeButton likeButton;
     @BindView(R.id.movies_detail_trailers_list) RecyclerView recyclerViewTrailers;
     @BindView(R.id.movies_detail_reviews_list) RecyclerView recyclerViewReviews;
+    @BindView(R.id.movies_detail_connection_info) RelativeLayout connectionLayout;
 
     @Inject MovieDetailContract.Presenter movieDetailPresenter;
 
@@ -82,8 +86,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
             }
         });
 
-        mMovie = (Movie) getIntent().getExtras().get("movie");
-
         //trailers
         trailersAdapter = new TrailersAdapter();
         LinearLayoutManager trailersLayoutManager =
@@ -98,6 +100,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
         recyclerViewReviews.setLayoutManager(reviewsLayoutManager);
         recyclerViewReviews.setAdapter(reviewsAdapter);
         recyclerViewReviews.setNestedScrollingEnabled(false);
+
+        mMovie = (Movie) getIntent().getExtras().get(Constants.MOVIE_SAVED_INSTANCE);
+
+        //set fav
+        likeButton.setLiked(movieDetailPresenter.isFavMovie(mMovie.getId()));
 
         if (savedInstanceState == null) {
             showTrailers();
@@ -171,11 +178,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailCont
     }
 
     @Override public void hasConnection() {
-
+        connectionLayout.setVisibility(View.GONE);
+        movieDetailPresenter.checkIfNeedRetry(mMovie.getId());
     }
 
     @Override public void loseConnection() {
-
+        connectionLayout.setVisibility(View.VISIBLE);
     }
 
     @Override public void showTrailers(List<Trailer> trailers) {

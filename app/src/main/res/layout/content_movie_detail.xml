@@ -115,6 +115,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
@@ -138,45 +139,68 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:orientation="vertical"
+                >
+
+              <com.like.LikeButton
+                  android:id="@+id/movie_detail_fav_button"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginRight="10dp"
+                  android:layout_marginTop="-20dp"
+                  app:icon_size="25dp"
+                  app:icon_type="heart"
+                  />
+
+            </LinearLayout>
+
+
           </LinearLayout>
 
           <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_marginLeft="4dp"
               android:layout_marginTop="16dp"
               android:gravity="left"
               android:text="@string/movie_detail_overview"
               android:textColor="@android:color/black"
-              android:layout_marginLeft="4dp"
               android:textSize="10dp"
               />
 
           <TextView
               android:id="@+id/movie_detail_overview"
-              android:layout_marginTop="6dp"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingLeft="4dp"
-              android:paddingRight="4dp"
+              android:layout_marginTop="6dp"
               android:gravity="left"
               android:maxLines="10"
+              android:paddingLeft="4dp"
+              android:paddingRight="4dp"
               android:textSize="14dp"
               />
 
 
           <android.support.v7.widget.RecyclerView
               android:id="@+id/movies_detail_trailers_list"
-              android:visibility="gone"
-              android:layout_marginTop="10dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"/>
+              android:layout_height="match_parent"
+              android:layout_marginTop="10dp"
+              android:visibility="gone"
+              />
 
           <android.support.v7.widget.RecyclerView
               android:id="@+id/movies_detail_reviews_list"
-              android:visibility="gone"
-              android:layout_marginTop="10dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"/>
+              android:layout_height="match_parent"
+              android:layout_marginTop="10dp"
+              android:visibility="gone"
+              />
 
 
         </LinearLayout>
@@ -189,6 +213,20 @@
   </ScrollView>
 
 
-
+  <RelativeLayout
+      android:id="@+id/movies_detail_connection_info"
+      android:layout_width="match_parent"
+      android:layout_height="30dp"
+      android:background="@color/redAlert"
+      android:orientation="vertical"
+      >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/connection_loose"
+        android:textColor="@android:color/white"
+        />
+  </RelativeLayout>
 
 </RelativeLayout>

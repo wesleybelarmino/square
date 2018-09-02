@@ -63,4 +63,7 @@ dependencies {
   compileOnly "org.projectlombok:lombok:1.18.0"
   annotationProcessor "org.projectlombok:lombok:1.18.0"
 
+  //like
+  implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
 }

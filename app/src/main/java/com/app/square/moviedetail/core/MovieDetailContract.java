@@ -19,5 +19,7 @@ public interface MovieDetailContract {
     interface Presenter extends BasePresenter{
         void loadTrailers(int movieId);
         void loadReviews(int movieId);
+        boolean isFavMovie(int movieId);
+        void checkIfNeedRetry(int movieId);
     }
 }
