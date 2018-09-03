@@ -2,6 +2,7 @@ package com.app.square.movies.list;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener {
     public static String TAG = EndlessRecyclerOnScrollListener.class.getSimpleName();
@@ -26,20 +27,31 @@ public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScr
         totalItemCount = mLinearLayoutManager.getItemCount();
         firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
+        //Log.d("main","onScrolled():totalItemCount: "+totalItemCount);
+        //Log.d("main","onScrolled():previousTotal: "+previousTotal);
+        //
         if (loading) {
+            //Log.d("main","onScrolled():loading");
             if (totalItemCount > previousTotal) {
+                //Log.d("main","totalItemCount > previousTotal");
                 loading = false;
                 previousTotal = totalItemCount;
+                //Log.d("main","onScrolled():previousTotal = totalItemCount");
             }
         }
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem
             + visibleThreshold)) {
             // End has been reached
 
+            //Log.d("main","onScrolled():onLoadMore()");
             onLoadMore();
 
             loading = true;
         }
+    }
+
+    public void resetpreviousTotal(){
+        previousTotal = 0;
     }
 
     public abstract void onLoadMore();

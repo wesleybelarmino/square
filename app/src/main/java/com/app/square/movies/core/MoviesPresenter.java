@@ -34,8 +34,8 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         this.moviesView = view;
         this.dataManager = dataManager;
         this.moviesList = new ArrayList<>();
-        this.totalPages = 1000;
         this.subscriptions = subs;
+        this.totalPages = 1000;
         this.currentPage = 1;
     }
 
@@ -57,7 +57,7 @@ public class MoviesPresenter implements MoviesContract.Presenter {
 
     private void loadMoviesDiscoverList() {
         currentPage = 1;
-        moviesList.clear();
+        moviesList.removeAll(moviesList);
         loadMovieDiscover(currentPage);
     }
 

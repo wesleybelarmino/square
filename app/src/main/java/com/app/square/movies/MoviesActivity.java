@@ -51,6 +51,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
     private MoviesAdapter moviesAdapter;
     private boolean isDrawerClosed = true;
     private int currentDrawerId;
+    private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,35 +79,9 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
 
         initShimmer();
         moviesAdapter = new MoviesAdapter();
-
+        setRecyclerView();
         drawerToggle();
         navigationAction();
-
-        //recyclerview
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                int i = moviesAdapter.getItemViewType(position);
-                if (i == moviesAdapter.VIEW_TYPE_ITEM) {
-                    return 1;
-                } else if (i == moviesAdapter.VIEW_TYPE_PROGRESSBAR) {
-                    return 2; //number of columns of the grid
-                } else {
-                    return -1;
-                }
-            }
-        });
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(moviesAdapter);
-
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(gridLayoutManager) {
-            @Override public void onLoadMore() {
-                if(currentDrawerId != R.id.drawer_item_fav){
-                    loadMoreItems();
-                }
-            }
-        });
 
 
         Log.d("main", "savedInstanceState: "+savedInstanceState);
@@ -135,6 +110,40 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
             moviesPresenter.onCreateSavedInstance(discoverSortedBy, (List<Movie>)savedInstanceState.getSerializable(Constants
                 .MOVIES_SAVED_INSTANCE_LIST_KEY));
         }
+
+    }
+
+    private void setRecyclerView(){
+        //recyclerview
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int i = moviesAdapter.getItemViewType(position);
+                if (i == moviesAdapter.VIEW_TYPE_ITEM) {
+                    return 1;
+                } else if (i == moviesAdapter.VIEW_TYPE_PROGRESSBAR) {
+                    return 2; //number of columns of the grid
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(moviesAdapter);
+
+        //endless scroll
+        endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener(gridLayoutManager) {
+            @Override public void onLoadMore() {
+                Log.d("main", "onLoadMore ");
+                if(currentDrawerId != R.id.drawer_item_fav){
+                    loadMoreItems();
+                }
+            }
+        };
+
+        recyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
 
     }
 
@@ -177,6 +186,7 @@ public class MoviesActivity extends BaseActivity implements MoviesContract.View 
                     if (item.getItemId() != currentDrawerId) {
                         initShimmer();
                         moviesAdapter.clear();
+                        endlessRecyclerOnScrollListener.resetpreviousTotal();
 
                         if (item.isChecked()) {
                             item.setChecked(false);

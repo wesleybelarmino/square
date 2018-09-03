@@ -70,7 +70,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public void clear(){
         start = 0;
-        moviesList.clear();
+        moviesList.removeAll(moviesList);
         notifyDataSetChanged();
     }
 
