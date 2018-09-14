@@ -108,8 +108,15 @@ public class MoviesPresenter implements MoviesContract.Presenter {
         Log.d("presenter", "loadMovieDiscover page:" + page);
         Log.d("presenter", "loadDiscoverMovies :" + dataManager);
         Log.d("presenter", "loadDiscoverMovies discoverSortedBy:" + discoverSortedBy);
-        Observable<MoviesResult> moviesResultObservable =
-            dataManager.getMoviesList(discoverSortedBy, page);
+
+        Observable<MoviesResult> moviesResultObservable;
+        if(discoverSortedBy.equals(Constants.MOVIES_SORT_BY_MOST_POPULAR)){
+            moviesResultObservable = dataManager.getMostPopularMovies(page);
+
+        }else{
+            moviesResultObservable = dataManager.getTopRatingMovies(page);
+        }
+
         moviesResultObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MoviesResult>() {

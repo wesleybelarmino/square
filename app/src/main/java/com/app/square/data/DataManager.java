@@ -29,9 +29,17 @@ public class DataManager {
 
     }
 
-    public Observable<MoviesResult> getMoviesList(String sort_by, int page) {
-        return apiRequest.get().movieDiscover(API_KEY, "en-US", sort_by,
-            "false","" + page);
+    //public Observable<MoviesResult> getMoviesList(String sort_by, int page) {
+    //    return apiRequest.get().movieDiscover(API_KEY, "en-US", sort_by,
+    //        "false","" + page);
+    //}
+
+    public Observable<MoviesResult> getMostPopularMovies(int page){
+        return apiRequest.get().mostPopular(API_KEY, "en-US", ""+page);
+    }
+
+    public Observable<MoviesResult> getTopRatingMovies(int page){
+        return apiRequest.get().topRating(API_KEY, "en-US", ""+page);
     }
 
     public Observable<TrailersResult> getTrailersByMovie(int movie_id){

@@ -10,10 +10,16 @@ import retrofit2.http.Query;
 
 public interface IApiServiceGet {
 
-    @GET("discover/movie") Observable<MoviesResult> movieDiscover(
-        @Query("api_key") String api_key, @Query("language") String language,
-        @Query("sort_by") String sort_by, @Query("include_adult") String include_adult,
-        @Query("page") String page);
+    //@GET("discover/movie") Observable<MoviesResult> movieDiscover(
+    //    @Query("api_key") String api_key, @Query("language") String language,
+    //    @Query("sort_by") String sort_by, @Query("include_adult") String include_adult,
+    //    @Query("page") String page);
+
+    @GET("movie/popular") Observable<MoviesResult> mostPopular(@Query("api_key") String api_key,
+        @Query("language") String language, @Query("page") String page);
+
+    @GET("movie/top_rated") Observable<MoviesResult> topRating(@Query("api_key") String api_key,
+        @Query("language") String language, @Query("page") String page);
 
     @GET("movie/{id}/videos") Observable<TrailersResult> trailersByMovie(@Path("id") int movie_id,
         @Query("api_key") String api_key, @Query("language") String language);
