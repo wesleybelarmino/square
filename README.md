@@ -3,6 +3,7 @@
 Android application using MVP + Dagger 2 + RX to build a Clean/Modern Android App/Code
 
 App Libraries
+<br/>
 In this Project i have used many api which and I will describe each one briefly.
 
 **GLide**: Image Loading and caching library for loading images from internet.  
